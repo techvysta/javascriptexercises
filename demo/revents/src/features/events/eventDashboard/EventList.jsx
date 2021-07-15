@@ -1,14 +1,14 @@
 import React from 'react';
 import EventListItem from './EventListItem';
 
-export default function EventList(props) {
-    return(
+export default function EventList({events}) {
+    return (
     <>
-        {props.events.map(event =>(
-            <EventListItem event={event}/>
+        { events.map(event =>(
+            <EventListItem event={event} key={event.id} />
         ))}
         
      </>
-    )
+    );
 }
 
