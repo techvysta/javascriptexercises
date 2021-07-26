@@ -19,7 +19,6 @@ export default function NavBar({setFormOpen}){
                     <Button basic inverted content='Register' style={{marginLeft:'0.5em'}} />
                 </Menu.Item>
                 </Container>
-    
         </Menu>
     )
 
