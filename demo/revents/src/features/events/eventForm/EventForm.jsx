@@ -2,9 +2,18 @@ import React, { useState } from 'react';
 import { Button, Form, Header, Segment } from 'semantic-ui-react';
 import cuid from 'cuid';
 import { Link } from 'react-router-dom';
+import {useSelector} from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { createEvent, updateEvent } from '../eventActions';
 
-export default function EventForm({setFormOpen, setEvents, createEvent, selectedEvent, updateEvent }) {
-    const initialValues = selectedEvent ?? {
+    export default function EventForm({match, history }) {
+        const dispatch = useDispatch();
+        const selectedEvent = useSelector(state => 
+        state.event.events.find(e => e.id === match.params.id)
+        );
+        
+
+        const initialValues = selectedEvent ?? {
         title: '',
         category:'',
         description:'',
@@ -17,25 +26,26 @@ export default function EventForm({setFormOpen, setEvents, createEvent, selected
     
     function handleFormSubmit() {
         selectedEvent 
-        ? updateEvent({...selectedEvent, ...values}) 
-        : createEvent({
-        ...values, 
-        id: cuid(),  
-        attendees:[], 
+        ? dispatch(updateEvent({ ...selectedEvent, ...values })) 
+        : dispatch(createEvent({
+        ...values,
+        id: cuid(),   
         hostedBy: 'Bob',
+        attendees:[],
         hostPhotoURL: '/assets/user.png',
-         });
-    setFormOpen(false);
+         })
+         );
+         history.push('/events');
     }
 
-    function handleInputChange(e){
-        const{name, value} =e.target;
-        setValues({...values, [name]: value});
+    function handleInputChange(e) {
+        const{ name, value } = e.target;
+        setValues({ ...values, [name]: value });
     }
 
     return(
         <Segment clearing>
-            <Header content= {selectedEvent ? 'Edit the event' : 'Create new event'}/>
+            <Header content= {selectedEvent ? 'Edit the event' : 'Create new event'} />
             <Form onSubmit={handleFormSubmit}>
                 <Form.Field>
                     <input 
@@ -47,7 +57,8 @@ export default function EventForm({setFormOpen, setEvents, createEvent, selected
                     />
                 </Form.Field>
                 <Form.Field>
-                    <input type="text" 
+                    <input 
+                    type="text" 
                     placeholder='Category'
                     name='category'
                     value={values.category} 
@@ -55,7 +66,8 @@ export default function EventForm({setFormOpen, setEvents, createEvent, selected
                     />
                 </Form.Field>
                 <Form.Field>
-                    <input type="text" 
+                    <input 
+                    type="text" 
                     placeholder='Description'
                     name='description'
                     value={values.description} 
@@ -63,7 +75,8 @@ export default function EventForm({setFormOpen, setEvents, createEvent, selected
                     />
                 </Form.Field>
                 <Form.Field>
-                    <input type="text" 
+                    <input 
+                    type="text" 
                     placeholder='City'
                     name='city'
                     value={values.city} 
@@ -71,7 +84,8 @@ export default function EventForm({setFormOpen, setEvents, createEvent, selected
                     />
                </Form.Field>
                 <Form.Field>
-                    <input type="text" 
+                    <input 
+                    type="text" 
                     placeholder='Venue'
                     name='venue'
                     value={values.venue} 
@@ -79,7 +93,8 @@ export default function EventForm({setFormOpen, setEvents, createEvent, selected
                     />
                 </Form.Field>
                 <Form.Field>
-                    <input type="date" 
+                    <input 
+                    type="date" 
                     placeholder='Date'
                     name='date'
                     value={values.date} 
@@ -95,5 +110,5 @@ export default function EventForm({setFormOpen, setEvents, createEvent, selected
                  />
             </Form>
         </Segment>
-    )
+    );
 }
