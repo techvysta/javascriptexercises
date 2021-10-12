@@ -1,5 +1,5 @@
-const INCREMENT_COUNTER = 'INCREMENT_COUNTER';
-const DECREMENT_COUNTER = 'DECREMENT_COUNTER';
+export const INCREMENT_COUNTER = 'INCREMENT_COUNTER';
+export const DECREMENT_COUNTER = 'DECREMENT_COUNTER';
 
 export function increment(amount){
     return{
@@ -16,8 +16,9 @@ export function decrement(amount){
 }
 
 const initialState = {
-    data: 42
-}
+    data: 42,
+};
+
 export default function testReducer(state=initialState, {type,payload}){
     switch (type) {
         case INCREMENT_COUNTER:

@@ -1,7 +1,8 @@
 import React from'react';
+import { useSelector } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 import EventList from './EventList';
-import { useSelector } from 'react-redux';
+
 
 
  export default function EventDashboard()  {
