@@ -1,4 +1,4 @@
-import {sampleData} from '../../app/api/sampleData';
+
 import { CREATE_EVENT, DELETE_EVENT, UPDATE_EVENT, FETCH_EVENTS } from './eventConstants';
 
 const initialState = {
