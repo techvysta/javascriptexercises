@@ -16,6 +16,7 @@ export default function TestPlaceInput() {
       .then(results => getLatLng(results[0]))
       .then(latLng => console.log('Success', latLng))
       .catch(error => console.error('Error', error));
+      setAddress(address);
   };
 
     return (
