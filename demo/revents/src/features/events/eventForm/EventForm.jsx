@@ -1,7 +1,7 @@
-import React from 'react';
-import { Button,  Header, Segment } from 'semantic-ui-react';
+import React, {useState} from 'react';
+import { Button,  Header, Segment, Confirm, } from 'semantic-ui-react';
 import { Link, Redirect } from 'react-router-dom';
-import { useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {  listenToEvents,  } from '../eventActions';
 import { Formik, Form} from 'formik';
 import * as Yup from 'yup';
@@ -14,9 +14,12 @@ import useFirestoreDoc from '../../../app/hooks/useFirestoreDoc';
 import { addEventToFireStore, listenToEventFromFirestore, updateEventInFirestore } from '../../../app/firestore/firestoreService';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { toast } from 'react-toastify';
+import { cancelEventToggel } from '../../../app/firestore/firestoreService';
 
     export default function EventForm({ match, history }) {
         const dispatch = useDispatch();
+        const [loadingCancel, setLoadingCancel] = useState(false);
+        const [confirmOpen, setConfirmOpen] = useState(false);
         const selectedEvent = useSelector((state) => 
         state.event.events.find((e) => e.id === match.params.id)
         );
@@ -40,6 +43,18 @@ import { toast } from 'react-toastify';
         date: Yup.string().required(),
 
     });
+     
+    async function handleCancelToggel(event) {
+        setConfirmOpen(false);
+        setLoadingCancel(true);
+        try{
+          await cancelEventToggel(event);
+          setLoadingCancel(false);
+        } catch(error) {
+            setLoadingCancel(true);
+            toast.error(error.message);
+        }
+    }
 
     useFirestoreDoc ({
         shouldExecute: !!match.params.id,
@@ -87,15 +102,24 @@ import { toast } from 'react-toastify';
                     timeCaption='time'
                     dateFormat='MMMM d, yyyy h:mm a' 
                     />
-                    
-                    <Button 
+                    {selectedEvent &&
+                <Button
+                    loading={loadingCancel} 
+                    type='button' 
+                    floated='left' 
+                    color={selectedEvent.isCancelled ? 'green' : 'red' }
+                    content={selectedEvent.isCancelled ? 'Reactivate event' : 'Cancel Event'}
+                    onClick={() => setConfirmOpen(true)} 
+                    />}
+                <Button 
                     loading={isSubmitting}
                     disabled={!isValid || !dirty || isSubmitting} 
                     type='submit' 
                     floated='right' 
                     positive 
-                    content='Submit' />
-                    <Button
+                    content='Submit' 
+                    />
+                <Button
                     disabled={isSubmitting}
                      as={Link} 
                      to='/events'
@@ -106,6 +130,13 @@ import { toast } from 'react-toastify';
                      </Form>
             )}
             </Formik>
+            <Confirm 
+            content={selectedEvent?.isCancelled ? 'This will reactivate the event - are you sure?' : 
+            'This will cancel the event - are you sure?'}
+            open={confirmOpen}
+            onCancel={() => setConfirmOpen(false)}
+            onConfirm={() => handleCancelToggel(selectedEvent)}
+            />
         </Segment>
     );
 }
